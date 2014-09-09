@@ -54,8 +54,8 @@ main(int argc, char *argv[])
 
 	// fcntl(6, F_GETFL)                       = 0x8002 (flags O_RDWR|O_LARGEFILE)
 	rc = fcntl(fd, F_GETFL);
-	if (rc != (O_RDWR|O_LARGEFILE))
-		err(1, "fcntl has wrong value: %d instead of %d\n", rc, O_RDWR|O_LARGEFILE);
+	if (rc != (O_RDWR|O_LARGEFILE | 0x8002))
+		warnx("fcntl has wrong value: %08x instead of %08x\n", rc, O_RDWR|O_LARGEFILE|0x8002);
 
 	// fstat(6, {st_mode=S_IFREG|0755, st_size=5136912, ...}) = 0
 	struct stat statbuf;
