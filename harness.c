@@ -52,6 +52,17 @@ main(int argc, char *argv[])
 	else if (rc != in_size)
 		err(1, "write didn't complete: %d instead of %zd", rc, in_size);
 
+	// fcntl(6, F_GETFL)                       = 0x8002 (flags O_RDWR|O_LARGEFILE)
+	rc = fcntl(fd, F_GETFL);
+	if (rc != (O_RDWR|O_LARGEFILE))
+		err(1, "fcntl has wrong value: %d instead of %d\n", rc, O_RDWR|O_LARGEFILE);
+
+	// fstat(6, {st_mode=S_IFREG|0755, st_size=5136912, ...}) = 0
+	struct stat statbuf;
+	rc = fstat(fd, &statbuf);
+	if (rc < 0)
+		err(1, "fstat");
+
 	// mmap(NULL, 5136912, PROT_READ|PROT_WRITE, MAP_SHARED, 6, 0) = 0x7f5d83175000
 	void *addr;
 	addr = mmap(NULL, in_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
