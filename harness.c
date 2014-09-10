@@ -76,6 +76,10 @@ main(int argc, char *argv[])
 		err(1, "mremap");
 	addr = addr2;
 
+	char sadface __attribute__((unused));
+	for (char *i = addr; i < (char *)addr+in_size; i++)
+		sadface = *i;
+
 	// ftruncate(6, 5136912)                   = 0
 	rc = ftruncate(fd, in_size);
 	if (rc < 0)
