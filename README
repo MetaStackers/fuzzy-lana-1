@@ -1,0 +1,48 @@
+So, basically:
+
+[root@fenchurch fuzzy-lana]# dd if=/dev/zero of=filesystem count=40 bs=1M
+40+0 records in
+40+0 records out
+41943040 bytes (42 MB) copied, 1.12005 s, 37.4 MB/s
+[root@fenchurch fuzzy-lana]# mkfs.ext4 -F -b 1024 filesystem
+mke2fs 1.42.8 (20-Jun-2013)
+Discarding device blocks: done                            
+Filesystem label=
+OS type: Linux
+Block size=1024 (log=0)
+Fragment size=1024 (log=0)
+Stride=0 blocks, Stripe width=0 blocks
+10240 inodes, 40960 blocks
+2048 blocks (5.00%) reserved for the super user
+First data block=1
+Maximum filesystem blocks=41943040
+5 block groups
+8192 blocks per group, 8192 fragments per group
+2048 inodes per group
+Superblock backups stored on blocks: 
+	8193, 24577
+
+Allocating group tables: done                            
+Writing inode tables: done                            
+Creating journal (4096 blocks): done
+Writing superblocks and filesystem accounting information: done
+[root@fenchurch fuzzy-lana]# mkdir tmp
+[root@fenchurch fuzzy-lana]# mount -o loop filesystem tmp
+[root@fenchurch fuzzy-lana]# ./harness tmp/foo
+[root@fenchurch fuzzy-lana]# hexdump -C tmp/foo | tail -5
+004e6cd0  f0 b1 6b e9 68 0e d7 13  54 7d 48 88 3e e3 71 3f  |..k.h...T}H.>.q?|
+004e6ce0  a8 40 3c 49 8a 0a bf a0  53 a5 be b0 cd af 2f f3  |.@<I....S...../.|
+004e6cf0  1c b8 d4 c3 d5 02 0a c0  e4 ea ac 8c d1 29 1e 76  |.............).v|
+004e6d00  5e 21 9b 74 00 00 00 00                           |^!.t....|
+004e6d08
+[root@fenchurch fuzzy-lana]# umount tmp
+[root@fenchurch fuzzy-lana]# mount -o loop filesystem tmp
+[root@fenchurch fuzzy-lana]# hexdump -C tmp/foo | tail -5
+004e63f0  0f 00 30 82 01 0a 02 82  01 01 00 bf 87 f1 75 2c  |..0...........u,|
+004e6400  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+*
+004e6d00  00 00 00 00 00 00 00 00                           |........|
+004e6d08
+[root@fenchurch fuzzy-lana]# 
+
+Yeah, so that's awesome.
