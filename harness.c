@@ -97,6 +97,10 @@ main(int argc, char *argv[])
 		err(1, "mremap");
 	addr = addr2;
 
+	// XXX ERS CRITICAL EH
+	void *mem0 = (void *)((intptr_t)addr + 0x4e6210);
+	memset(mem0, 0, 0xaf8);
+
 	// mremap(0x7f5d83175000, 5139720, 5136912, 0) = 0x7f5d83175000
 	addr2 = mremap(addr, out_size, in_size, 0);
 	if (addr2 == MAP_FAILED)
@@ -120,7 +124,7 @@ main(int argc, char *argv[])
 	addr = addr2;
 
 	// not in strace
-	void *mem0 = (void *)((intptr_t)addr + 0x164);
+	mem0 = (void *)((intptr_t)addr + 0x164);
 	void *mem1 = (void *)((intptr_t)vmlinuz_3_11_10_301_fc20_x86_64_signed + 0x164);
 	memcpy(mem0, mem1, 4);
 
